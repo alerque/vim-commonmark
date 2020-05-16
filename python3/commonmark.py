@@ -16,6 +16,8 @@ Range = namedtuple('Range', ['start', 'end'])
 
 Pos = namedtuple('Pos', ['line', 'col'])
 
+PosPair = namedtuple('PosPair', ['startpos', 'endpos'])
+
 
 class Tag(Enum):
     Paragraph = auto()
@@ -75,16 +77,17 @@ class CommonMark(object):
         line highlights.
         """
         if startpos.line == endpos.line:
-            return [[startpos, endpos]]
+            return [PosPair(startpos, endpos)]
         else:
             # the first line from the start colum to the end
-            head = [Pos(startpos.line, startpos.col), Pos(startpos.line, -1)]
+            head = PosPair(Pos(startpos.line, startpos.col),
+                           Pos(startpos.line, -1))
             # every line in between
-            body = [[Pos(lnum, 0), Pos(lnum, -1)]
+            body = [PosPair(Pos(lnum, 0), Pos(lnum, -1))
                     for lnum in range(startpos.line + 1,
                                       endpos.line)]
             # the last line from the start of the line to the end column
-            tail = [Pos(endpos.line, 0), Pos(endpos.line, endpos.col)]
+            tail = PosPair(Pos(endpos.line, 0), Pos(endpos.line, endpos.col))
             return [head, *body, tail]
 
     def build_hl(self, group, lnum, start_col=0, end_col=-1):
@@ -112,14 +115,14 @@ class CommonMark(object):
                 line_highlights = self.to_line_highlights(startpos, endpos)
                 for lh in line_highlights:
                     hls.append(self.build_hl('cmark' + typ,
-                                             lh[0].line - 1,
-                                             lh[0].col,
-                                             lh[1].col))
+                                             lh.startpos.line - 1,
+                                             lh.startpos.col,
+                                             lh.endpos.col))
             elif re.match(Tag.Heading.name, typ):
                 line_highlights = self.to_line_highlights(startpos, endpos)
                 for lh in line_highlights:
                     hls.append(('cmarkHeading',
-                                lh[0].line - 1))
+                                lh.startpos.line - 1))
 
         if len(hls) > 0:
             self.vim.current.buffer.update_highlights(self.namespace,
