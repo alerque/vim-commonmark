@@ -17,9 +17,21 @@ Pos = namedtuple('Pos', ['line', 'col'])
 
 class Tag(Enum):
     Paragraph = auto()
+    Heading = auto()
+    BlockQuote = auto()
+    CodeBlock = auto()
+    List = auto()
+    Item = auto()
+    FootnoteDefinition = auto()
+    Table = auto()
+    TableHead = auto()
+    TableRow = auto()
+    TableCell = auto()
     Emphasis = auto()
     Strong = auto()
-
+    Strikethrough = auto()
+    Link = auto()
+    Image = auto()
 
 
 @pynvim.plugin
