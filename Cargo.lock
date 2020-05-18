@@ -366,7 +366,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "078775d0255232fb988e6fccf26ddc9d1ac274299aaedcedce21c6f72cc533ce"
 
 [[package]]
-name = "vim-pandoc-syntax"
+name = "vim-commonmark"
 version = "0.0.0"
 dependencies = [
  "mlua",

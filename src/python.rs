@@ -16,7 +16,7 @@ fn get_offsets(_py: Python, buffer: String) -> PyResult<()> {
 }
 
 #[pymodule]
-fn libvim_pandoc_syntax(_py: Python, m: &PyModule) -> PyResult<()> {
+fn libvim_commonmark(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_wrapped(wrap_pyfunction!(to_html))?;
     m.add_wrapped(wrap_pyfunction!(get_offsets))?;
     Ok(())

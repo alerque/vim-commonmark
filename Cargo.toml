@@ -1,5 +1,5 @@
 [package]
-name = "vim-pandoc-syntax"
+name = "vim-commonmark"
 version = "0.0.0"
 authors = [
 	"Caleb Maclennan <caleb@alerque.com>",
@@ -7,7 +7,7 @@ authors = [
 edition = "2018"
 
 [lib]
-name = 'vim_pandoc_syntax'
+name = 'vim_commonmark'
 crate-type = ["cdylib"]
 
 [features]

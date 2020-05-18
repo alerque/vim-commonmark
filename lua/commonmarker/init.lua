@@ -1,5 +1,5 @@
 package.loaded["rust"] = nil -- Force module reload during dev
-local rust = require("libvim_pandoc_syntax")
+local rust = require("libvim_commonmark")
 
 local rustymarks = vim.api.nvim_create_namespace("rustymarks")
 

@@ -19,7 +19,7 @@ fn get_offsets(lua: &Lua, buffer: String) -> LuaResult<LuaTable> {
 }
 
 #[lua_module]
-fn libvim_pandoc_syntax(lua: &Lua) -> LuaResult<LuaTable> {
+fn libvim_commonmark(lua: &Lua) -> LuaResult<LuaTable> {
     let exports = lua.create_table()?;
     exports.set("to_html", lua.create_function(to_html)?)?;
     exports.set("get_offsets", lua.create_function(get_offsets)?)?;
