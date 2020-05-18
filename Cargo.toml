@@ -33,3 +33,6 @@ version = "0.3.0"
 optional = true
 version = "0.10.1"
 features = ["extension-module"]
+
+[profile.release]
+lto = true
