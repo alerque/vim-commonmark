@@ -78,11 +78,10 @@ fn get_offsets(buffer: String) -> Result<Events> {
 #[cfg(test)]
 mod tests {
     use crate::*;
-    use mlua::Lua;
 
     #[test]
     fn can_render_html() {
-        let ret = render_html(&Lua::new(), String::from("# thing")).unwrap();
+        let ret = to_html(String::from("# thing")).unwrap();
         assert_eq!(ret, "<h1>thing</h1>\n");
     }
 }
