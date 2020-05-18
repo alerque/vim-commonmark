@@ -56,13 +56,13 @@ local function highlight (buffer, namespace)
 	end
 end
 
-commonmarker.detach = function (self, buffer)
+function commonmarker:detach (buffer)
 	dump(self._attachments)
 	self._attachments[buffer] = nil
 	buf_clear_namespace(buffer, self._namespace, 0, -1)
 end
 
-commonmarker.attach = function (self, buffer)
+function commonmarker:attach (buffer)
 	if self._attachments[buffer] then return end
 	self._attachments[buffer] = true
 	highlight(buffer, self._namespace)
