@@ -5,9 +5,9 @@ fn to_html(_: &Lua, buffer: String) -> LuaResult<String> {
     Ok(super::to_html(buffer).unwrap())
 }
 
-fn get_offsets(lua: &Lua, buffer: String) -> LuaResult<LuaTable> {
+fn get_offsets(lua: &Lua, (buffer, firstbyte): (String, usize)) -> LuaResult<LuaTable> {
     let table = lua.create_table().unwrap();
-    let events = super::get_offsets(buffer).unwrap();
+    let events = super::get_offsets(buffer, firstbyte).unwrap();
     for (i, event) in events.iter().enumerate() {
         let info = lua.create_table().unwrap();
         info.set("group", event.group.as_str()).unwrap();

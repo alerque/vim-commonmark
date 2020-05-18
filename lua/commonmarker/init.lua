@@ -37,7 +37,8 @@ end
 
 local function highlight (buffer, namespace, firstline)
 	local contents = get_contents(buffer)
-	local events = rust.get_offsets(contents)
+	local firstbyte = call_function("line2byte", { firstline })
+	local events = rust.get_offsets(contents, firstbyte)
 	for _, event in ipairs(events) do
 		repeat -- Allow continue in for loop
 			local sline, scol = byte2pos(event.first)
