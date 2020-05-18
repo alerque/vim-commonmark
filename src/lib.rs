@@ -36,24 +36,26 @@ fn get_offsets(buffer: String) -> Result<Events> {
         let last = range.end + 1;
         let mut lang = None;
         let group = match event {
-            Event::Start(tag) => Some(match tag {
-                Tag::Heading(level) => format!("cmarkHeading{}", level),
+            Event::Start(tag) => match tag {
+                Tag::Heading(level) => Some(format!("cmarkHeading{}", level)),
                 Tag::CodeBlock(kind) => match kind {
-                    CodeBlockKind::Indented => String::from("cmarkCodeBlockIndented"),
+                    CodeBlockKind::Indented => Some(String::from("cmarkCodeBlockIndented")),
                     CodeBlockKind::Fenced(attrs) => {
                         lang = Some(attrs.to_string());
-                        String::from("cmarkCodeBlockFenced")
+                        Some(String::from("cmarkCodeBlockFenced"))
                     }
                 },
-                Tag::List(_) => String::from("cmarkList"),
-                Tag::FootnoteDefinition(_) => String::from("cmarkFootnoteDefinition"),
-                Tag::Table(_) => String::from("cmarkTable"),
-                Tag::Link { .. } => String::from("cmarkLink"),
-                Tag::Image { .. } => String::from("cmarkImage"),
-                _ => format!("cmark{:?}", tag),
-            }),
+                Tag::List(_) => Some(String::from("cmarkList")),
+                Tag::FootnoteDefinition(_) => Some(String::from("cmarkFootnoteDefinition")),
+                Tag::Table(_) => Some(String::from("cmarkTable")),
+                Tag::Link { .. } => Some(String::from("cmarkLink")),
+                Tag::Image { .. } => Some(String::from("cmarkImage")),
+                Tag::Paragraph { .. } => None,
+                _ => Some(format!("cmark{:?}", tag)),
+            },
             Event::End { .. } => None,
-            Event::Text { .. } => Some(String::from("cmarkText")),
+            //Event::Text { .. } => Some(String::from("cmarkText")),
+            Event::Text { .. } => None,
             Event::Code { .. } => Some(String::from("cmarkCode")),
             Event::Html { .. } => Some(String::from("cmarkHtml")),
             Event::FootnoteReference { .. } => Some(String::from("cmarkFootnoteReference")),
