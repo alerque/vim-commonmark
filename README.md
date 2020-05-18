@@ -1,6 +1,7 @@
 # Vim CommonMark
 
 [![Vint](https://github.com/alerque/vim-commonmark/workflows/Vint/badge.svg)](https://github.com/alerque/vim-commonmark/actions?workflow=Vint)
+[![Rustfmt](https://img.shields.io/github/workflow/status/alerque/vim-commonmark/Rustfmt?label=Rustfmt&logo=Rust)](https://github.com/alerque/vim-commonmark/actions?workflow=Rustfmt)
 
 Vim syntax highlighting and filetype plugin for [CommonMark][commonmark] using the [pulldown-cmark][pulldown-cmark] parser to inform the parsing. Because the syntax is not cobbled together from regular expressions but informed by a reas parser it will only ever highlight 100% valid CommonMark syntax (no false positives!).
 

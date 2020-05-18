@@ -1,0 +1,17 @@
+name: Rustfmt
+on: [push, pull_request]
+jobs:
+  rustfmt:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Run rustfmt
+        run: |
+          git ls-files '*.rs' | xargs rustfmt --check
