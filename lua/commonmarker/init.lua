@@ -41,22 +41,19 @@ local function highlight (buffer, namespace, firstline, lastline)
 	local lastbyte = call_function("line2byte", { lastline + 1 }) - 1
 	local events = rust.get_offsets(contents, firstbyte, lastbyte)
 	for _, event in ipairs(events) do
-		repeat -- Allow continue in for loop
-			local sline, scol = byte2pos(event.first)
-			if sline < firstline then break end
-			local eline, ecol = byte2pos(event.last)
-			if sline < eline then
-				buf_add_highlight(buffer, namespace, event.group, sline - 1, scol, -1)
+		local sline, scol = byte2pos(event.first)
+		local eline, ecol = byte2pos(event.last)
+		if sline < eline then
+			buf_add_highlight(buffer, namespace, event.group, sline - 1, scol, -1)
+			sline = sline + 1
+			while sline < eline do
+				buf_add_highlight(buffer, namespace, event.group, sline - 1, 0, -1)
 				sline = sline + 1
-				while sline < eline do
-					buf_add_highlight(buffer, namespace, event.group, sline - 1, 0, -1)
-					sline = sline + 1
-				end
-				buf_add_highlight(buffer, namespace, event.group, sline - 1, 0, ecol)
-			else
-				buf_add_highlight(buffer, namespace, event.group, sline - 1, scol, ecol)
 			end
-		until true
+			buf_add_highlight(buffer, namespace, event.group, sline - 1, 0, ecol)
+		else
+			buf_add_highlight(buffer, namespace, event.group, sline - 1, scol, ecol)
+		end
 	end
 end
 
