@@ -1,4 +1,5 @@
 use pyo3::prelude::*;
+use pyo3::types::PyDict;
 use pyo3::wrap_pyfunction;
 
 #[pyfunction]
@@ -7,12 +8,19 @@ fn to_html(_py: Python, buffer: String) -> PyResult<String> {
 }
 
 #[pyfunction]
-fn get_offsets(_py: Python, buffer: String) -> PyResult<()> {
+fn get_offsets(_py: Python, buffer: String) -> PyResult<&PyDict> {
     let events = super::get_offsets(buffer).unwrap();
+    let pyevents = PyDict::new(_py);
+    let mut i: u32 = 1;
     for event in events.iter() {
-        eprintln!("DEBUG={:#?}", event);
+        let event_dict = PyDict::new(_py);
+        event_dict.set_item("group", event.group.as_str()).unwrap();
+        event_dict.set_item("start", event.first).unwrap();
+        event_dict.set_item("end", event.last).unwrap();
+        pyevents.set_item(i, event_dict)?;
+        i += 1;
     }
-    Ok(())
+    Ok(pyevents)
 }
 
 #[pymodule]
