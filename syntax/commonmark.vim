@@ -1,3 +1,16 @@
+" Vim syntax file
+"
+" Language: CommonMark
+" Maintainer: Caleb Maclennan <caleb@alerque.com>
+
+scriptencoding utf-8
+
+if exists('b:current_syntax')
+    finish
+endif
+
+syntax clear
+
 " See: https://docs.rs/pulldown-cmark/0.7.1/pulldown_cmark/enum.Tag.html
 hi link cmarkParagraph Comment
 hi link cmarkHeading1 Constant
@@ -29,3 +42,9 @@ hi link cmarkFootnoteReference Macro
 hi link cmarkHardBreak Underlined
 hi link cmarkRule Debug
 hi link cmarkTaskListMarker Exception
+
+lua package.loaded["commonmarker"] = nil -- Force module reload during dev
+lua commonmarker = require("commonmarker")
+lua commonmarker.attach(vim.api.nvim_get_current_buf())
+
+let b:current_syntax = 'commonmark'
