@@ -3,7 +3,7 @@
 [![Cargo Build](https://img.shields.io/github/workflow/status/alerque/vim-commonmark/Rust?label=Cargo+Build)](https://github.com/alerque/vim-commonmark/actions?workflow=Rust)
 [![Rust Code Format](https://img.shields.io/github/workflow/status/alerque/vim-commonmark/Rustfmt?label=Rustfmt&logo=Rust)](https://github.com/alerque/vim-commonmark/actions?workflow=Rustfmt)
 [![VimL Lint Status](https://github.com/alerque/vim-commonmark/workflows/Vint/badge.svg)](https://github.com/alerque/vim-commonmark/actions?workflow=Vint)
-[![Lua Lint Status](https://img.shields.io/github/workflow/status/alerque/vim-commonmark/Luacheck?label=Luacheck&logo=Lua)](https://github.com/alerque/vim-commonmark/actions?workflow=Luacheck)
+[![Lua Lint Status](https://img.shields.io/github/workflow/status/alerque/vim-commonmark/Luacheck?label=Luacheck&logo=Lua)](https://github.com/alerque/vim-commonmark/actions?workflow=Luacheck) [![Join the chat at https://gitter.im/vim-commonmark/community](https://badges.gitter.im/vim-commonmark/community.svg)](https://gitter.im/vim-commonmark/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Vim syntax plugin specifically targetting [CommonMark][commonmark] using the [pulldown-cmark][pulldown-cmark] parser to inform the highlighting. Because the syntax is not cobbled together from regular expressions but informed by a real parser it will only ever highlight 100% valid CommonMark syntax (no false positives!).
 
