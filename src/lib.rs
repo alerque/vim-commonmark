@@ -27,7 +27,7 @@ struct MdTag {
 
 type Events = Vec<MdTag>;
 
-fn get_offsets(buffer: String, firstbyte: usize) -> Result<Events> {
+fn get_offsets(buffer: String, firstbyte: usize, lastbyte: usize) -> Result<Events> {
     let options = Options::all();
     let parser = Parser::new_ext(buffer.as_str(), options);
     let mut events = Events::new();
@@ -35,7 +35,7 @@ fn get_offsets(buffer: String, firstbyte: usize) -> Result<Events> {
         let first = range.start + 1;
         let last = range.end + 1;
         let mut lang = None;
-        if first < firstbyte {
+        if firstbyte > last || lastbyte < first {
             continue;
         }
         let group = match event {

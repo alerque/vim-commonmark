@@ -35,10 +35,11 @@ local function get_contents (buffer)
 	return table.concat(lines)
 end
 
-local function highlight (buffer, namespace, firstline)
+local function highlight (buffer, namespace, firstline, lastline)
 	local contents = get_contents(buffer)
 	local firstbyte = call_function("line2byte", { firstline })
-	local events = rust.get_offsets(contents, firstbyte)
+	local lastbyte = call_function("line2byte", { lastline + 1 }) - 1
+	local events = rust.get_offsets(contents, firstbyte, lastbyte)
 	for _, event in ipairs(events) do
 		repeat -- Allow continue in for loop
 			local sline, scol = byte2pos(event.first)
@@ -67,13 +68,13 @@ end
 function commonmarker:attach (buffer)
 	if self._attachments[buffer] then return end
 	self._attachments[buffer] = true
-	highlight(buffer, self._namespace, 0)
+	highlight(buffer, self._namespace, 1, call_function("line", { "$" }))
 	buf_attach(buffer, false, {
-			on_lines = function (_, _, _, firstline, _, _)
-				buf_clear_namespace(buffer, self._namespace, firstline, -1)
+			on_lines = function (_, _, _, firstline, lastline, _)
+				buf_clear_namespace(buffer, self._namespace, firstline, lastline)
 				-- Returning true here detaches, we thought we should have been already
 				if not self._attachments[buffer] then return true end
-				highlight(buffer, self._namespace, firstline)
+				highlight(buffer, self._namespace, firstline, lastline)
 			end,
 			on_detach = function (_)
 				self._attachments[buffer] = nil
