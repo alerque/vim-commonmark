@@ -20,3 +20,6 @@ After installing plugin as usual, `cd` to the plugin directory and run `make`.
 
   [commonmark]: https://commonmark.org
   [pulldown-cmark]: https://github.com/raphlinus/pulldown-cmark
+
+<!-- vim: ft=commonmark
+-->
