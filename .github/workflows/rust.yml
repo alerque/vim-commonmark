@@ -32,7 +32,7 @@ jobs:
           key: build-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
       - name: Run cargo build
         run: |
-          cargo build --locked
+          make all-rust
       - name: Run cargo test
         run: |
-          cargo test --locked
+          make test-rust
