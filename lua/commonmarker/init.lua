@@ -1,8 +1,6 @@
 package.loaded["rust"] = nil -- Force module reload during dev
 local rust = require("libvim_commonmark")
 
-local rustymarks = vim.api.nvim_create_namespace("rustymarks")
-
 -- The Lua API is verbose and repetative
 local call_function = vim.api.nvim_call_function
 local buf_add_highlight = vim.api.nvim_buf_add_highlight
@@ -10,7 +8,10 @@ local buf_attach = vim.api.nvim_buf_attach
 local buf_get_lines = vim.api.nvim_buf_get_lines
 local buf_clear_namespace = vim.api.nvim_buf_clear_namespace
 
-local _attachments = {}
+local commonmarker = {
+	_attachments = {},
+	_namespace = vim.api.nvim_create_namespace("rustymarks")
+}
 
 -- luacheck: ignore dump
 local function dump(...)
@@ -35,42 +36,49 @@ local function get_contents (buffer)
 	return table.concat(lines)
 end
 
-local function highlight (buffer)
+local function highlight (buffer, namespace)
 	local contents = get_contents(buffer)
 	local events = rust.get_offsets(contents)
 	for _, event in ipairs(events) do
 		local sline, scol = byte2pos(event.first)
 		local eline, ecol = byte2pos(event.last)
 		if sline < eline then
-			buf_add_highlight(buffer, rustymarks, event.group, sline - 1, scol, -1)
+			buf_add_highlight(buffer, namespace, event.group, sline - 1, scol, -1)
 			sline = sline + 1
 			while sline < eline do
-				buf_add_highlight(buffer, rustymarks, event.group, sline - 1, 0, -1)
+				buf_add_highlight(buffer, namespace, event.group, sline - 1, 0, -1)
 				sline = sline + 1
 			end
-			buf_add_highlight(buffer, rustymarks, event.group, sline - 1, 0, ecol)
+			buf_add_highlight(buffer, namespace, event.group, sline - 1, 0, ecol)
 		else
-			buf_add_highlight(buffer, rustymarks, event.group, sline - 1, scol, ecol)
+			buf_add_highlight(buffer, namespace, event.group, sline - 1, scol, ecol)
 		end
 	end
 end
 
-local function attach (buffer)
-	if _attachments[buffer] then return end
-	_attachments[buffer] = true
-	highlight(buffer)
+commonmarker.detach = function (self, buffer)
+	dump(self._attachments)
+	self._attachments[buffer] = nil
+	buf_clear_namespace(buffer, self._namespace, 0, -1)
+end
+
+commonmarker.attach = function (self, buffer)
+	if self._attachments[buffer] then return end
+	self._attachments[buffer] = true
+	highlight(buffer, self._namespace)
 	buf_attach(buffer, false, {
 			on_lines = function (_, _, _, _, _, _)
-				if not _attachments[buffer] then return end
-				buf_clear_namespace(buffer, rustymarks, 0, -1)
-				highlight(buffer)
+				dump(self)
+				buf_clear_namespace(buffer, self._namespace, 0, -1)
+				-- Returning true here detaches, we thought we should have been already
+				if not self._attachments[buffer] then return true end
+				highlight(buffer, self._namespace)
 			end,
-			on_detach = function ()
-				_attachments[buffer] = nil
+			on_detach = function (_)
+				self._attachments[buffer] = nil
+				self:detach(buffer)
 			end
 		})
 end
 
-return {
-	attach = attach,
-}
+return commonmarker

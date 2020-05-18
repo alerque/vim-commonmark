@@ -50,6 +50,11 @@ endif
 
 lua package.loaded["commonmarker"] = nil -- Force module reload during dev
 lua commonmarker = require("commonmarker")
-lua commonmarker.attach(vim.api.nvim_get_current_buf())
+lua commonmarker:attach(vim.api.nvim_get_current_buf())
+
+augroup commonmarker
+	autocmd!
+	autocmd Syntax * lua commonmarker:detach(vim.api.nvim_get_current_buf())
+augroup END
 
 let b:current_syntax = 'commonmark'
