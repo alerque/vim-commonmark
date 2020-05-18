@@ -11,9 +11,9 @@ name = 'vim_commonmark'
 crate-type = ["cdylib"]
 
 [features]
-default = ["python"]
-python = ["pyo3"]
+default = ["lua"]
 lua = ["mlua", "mlua_derive"]
+python = ["pyo3"]
 
 [dependencies.pulldown-cmark]
 version = "0.7.1"
