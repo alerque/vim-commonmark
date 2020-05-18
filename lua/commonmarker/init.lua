@@ -12,7 +12,8 @@ local buf_clear_namespace = vim.api.nvim_buf_clear_namespace
 
 local _attachments = {}
 
-function dump(...)
+-- luacheck: ignore dump
+local function dump(...)
 	if select("#", ...) == 1 then
 		vim.api.nvim_out_write(vim.inspect((...)))
 	else
@@ -21,7 +22,7 @@ function dump(...)
 	vim.api.nvim_out_write("\n")
 end
 
-local function byte2pos (buffer, byte)
+local function byte2pos (byte)
 	local line = call_function("byte2line", { byte })
 	-- local col = byte - vim.api.nvim_buf_get_offset(buffer, line)
 	local col = byte - call_function("line2byte", { line })
@@ -34,12 +35,12 @@ local function get_contents (buffer)
 	return table.concat(lines)
 end
 
-function highlight (buffer)
+local function highlight (buffer)
 	local contents = get_contents(buffer)
 	local events = rust.get_offsets(contents)
-	for i, event in ipairs(events) do
-		local sline, scol = byte2pos(buffer, event.first)
-		local eline, ecol = byte2pos(buffer, event.last)
+	for _, event in ipairs(events) do
+		local sline, scol = byte2pos(event.first)
+		local eline, ecol = byte2pos(event.last)
 		if sline < eline then
 			buf_add_highlight(buffer, rustymarks, event.group, sline - 1, scol, -1)
 			sline = sline + 1
@@ -59,7 +60,7 @@ local function attach (buffer)
 	_attachments[buffer] = true
 	highlight(buffer)
 	buf_attach(buffer, false, {
-			on_lines = function (event_type, buffer, changed_tick, firstline, lastline, new_lastline)
+			on_lines = function (_, _, _, _, _, _)
 				if not _attachments[buffer] then return end
 				buf_clear_namespace(buffer, rustymarks, 0, -1)
 				highlight(buffer)
