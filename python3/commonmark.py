@@ -5,7 +5,7 @@ from enum import Enum, auto
 from collections import namedtuple
 import pynvim
 sys.path.append(os.path.dirname(__file__))
-import libpulldowncmark
+import libvim_commonmark
 
 
 def q(string):
