@@ -25,7 +25,6 @@ end
 
 local function byte2pos (byte)
 	local line = call_function("byte2line", { byte })
-	-- local col = byte - vim.api.nvim_buf_get_offset(buffer, line)
 	local col = byte - call_function("line2byte", { line })
 	return line, col
 end
@@ -36,28 +35,30 @@ local function get_contents (buffer)
 	return table.concat(lines)
 end
 
-local function highlight (buffer, namespace)
+local function highlight (buffer, namespace, firstline)
 	local contents = get_contents(buffer)
 	local events = rust.get_offsets(contents)
 	for _, event in ipairs(events) do
-		local sline, scol = byte2pos(event.first)
-		local eline, ecol = byte2pos(event.last)
-		if sline < eline then
-			buf_add_highlight(buffer, namespace, event.group, sline - 1, scol, -1)
-			sline = sline + 1
-			while sline < eline do
-				buf_add_highlight(buffer, namespace, event.group, sline - 1, 0, -1)
+		repeat -- Allow continue in for loop
+			local sline, scol = byte2pos(event.first)
+			if sline < firstline then break end
+			local eline, ecol = byte2pos(event.last)
+			if sline < eline then
+				buf_add_highlight(buffer, namespace, event.group, sline - 1, scol, -1)
 				sline = sline + 1
+				while sline < eline do
+					buf_add_highlight(buffer, namespace, event.group, sline - 1, 0, -1)
+					sline = sline + 1
+				end
+				buf_add_highlight(buffer, namespace, event.group, sline - 1, 0, ecol)
+			else
+				buf_add_highlight(buffer, namespace, event.group, sline - 1, scol, ecol)
 			end
-			buf_add_highlight(buffer, namespace, event.group, sline - 1, 0, ecol)
-		else
-			buf_add_highlight(buffer, namespace, event.group, sline - 1, scol, ecol)
-		end
+		until true
 	end
 end
 
 function commonmarker:detach (buffer)
-	dump(self._attachments)
 	self._attachments[buffer] = nil
 	buf_clear_namespace(buffer, self._namespace, 0, -1)
 end
@@ -65,14 +66,13 @@ end
 function commonmarker:attach (buffer)
 	if self._attachments[buffer] then return end
 	self._attachments[buffer] = true
-	highlight(buffer, self._namespace)
+	highlight(buffer, self._namespace, 0)
 	buf_attach(buffer, false, {
-			on_lines = function (_, _, _, _, _, _)
-				dump(self)
-				buf_clear_namespace(buffer, self._namespace, 0, -1)
+			on_lines = function (_, _, _, firstline, _, _)
+				buf_clear_namespace(buffer, self._namespace, firstline, -1)
 				-- Returning true here detaches, we thought we should have been already
 				if not self._attachments[buffer] then return true end
-				highlight(buffer, self._namespace)
+				highlight(buffer, self._namespace, firstline)
 			end,
 			on_detach = function (_)
 				self._attachments[buffer] = nil
