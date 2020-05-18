@@ -13,7 +13,9 @@ CARGO_FLAGS = $(and $(PROFILE:debug=),--$(PROFILE))
 .PHONY: lua_lib
 lua_lib: target-lua/$(PROFILE)/libvim_commonmark.so
 
-target-lua/$(PROFILE)/libvim_commonmark.so:
+RUST_SOURCES = Cargo.lock $(wildcard src/*.rs)
+
+target-lua/$(PROFILE)/libvim_commonmark.so: $(RUST_SOURCES)
 	export LUA_INC=/usr/include/luajit-2.0/
 	export LUA_LIB=/usr/lib LUA_LIB_NAME=luajit-5.1
 	export LUA_LINK=dynamic
@@ -22,7 +24,7 @@ target-lua/$(PROFILE)/libvim_commonmark.so:
 .PHONY: python_lib
 python_lib: target-python/$(PROFILE)/libvim_commonmark.so
 
-target-python/$(PROFILE)/libvim_commonmark.so:
+target-python/$(PROFILE)/libvim_commonmark.so: $(RUST_SOURCES)
 	cargo build --no-default-features --features python --target-dir target-python $(CARGO_FLAGS)
 
 .PHONY: links
