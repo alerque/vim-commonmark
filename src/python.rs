@@ -8,8 +8,13 @@ fn to_html(_py: Python, buffer: String) -> PyResult<String> {
 }
 
 #[pyfunction]
-fn get_offsets(_py: Python, buffer: String) -> PyResult<&PyDict> {
-    let events = super::get_offsets(buffer).unwrap();
+fn get_offsets(
+    _py: Python,
+    buffer: String,
+    firstbyte: usize,
+    lastbyte: usize,
+) -> PyResult<&PyDict> {
+    let events = super::get_offsets(buffer, firstbyte, lastbyte).unwrap();
     let pyevents = PyDict::new(_py);
     let mut i: u32 = 1;
     for event in events.iter() {

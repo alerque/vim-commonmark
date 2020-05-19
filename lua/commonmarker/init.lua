@@ -25,7 +25,6 @@ end
 
 local function byte2pos (byte)
 	local line = call_function("byte2line", { byte })
-	-- local col = byte - vim.api.nvim_buf_get_offset(buffer, line)
 	local col = byte - call_function("line2byte", { line })
 	return line, col
 end
@@ -36,9 +35,11 @@ local function get_contents (buffer)
 	return table.concat(lines)
 end
 
-local function highlight (buffer, namespace)
+local function highlight (buffer, namespace, firstline, lastline)
 	local contents = get_contents(buffer)
-	local events = rust.get_offsets(contents)
+	local firstbyte = call_function("line2byte", { firstline })
+	local lastbyte = call_function("line2byte", { lastline + 1 }) - 1
+	local events = rust.get_offsets(contents, firstbyte, lastbyte)
 	for _, event in ipairs(events) do
 		local sline, scol = byte2pos(event.first)
 		local eline, ecol = byte2pos(event.last)
@@ -57,7 +58,6 @@ local function highlight (buffer, namespace)
 end
 
 function commonmarker:detach (buffer)
-	dump(self._attachments)
 	self._attachments[buffer] = nil
 	buf_clear_namespace(buffer, self._namespace, 0, -1)
 end
@@ -65,14 +65,13 @@ end
 function commonmarker:attach (buffer)
 	if self._attachments[buffer] then return end
 	self._attachments[buffer] = true
-	highlight(buffer, self._namespace)
+	highlight(buffer, self._namespace, 1, call_function("line", { "$" }))
 	buf_attach(buffer, false, {
-			on_lines = function (_, _, _, _, _, _)
-				dump(self)
-				buf_clear_namespace(buffer, self._namespace, 0, -1)
+			on_lines = function (_, _, _, firstline, lastline, _)
+				buf_clear_namespace(buffer, self._namespace, firstline, lastline)
 				-- Returning true here detaches, we thought we should have been already
 				if not self._attachments[buffer] then return true end
-				highlight(buffer, self._namespace)
+				highlight(buffer, self._namespace, firstline, lastline)
 			end,
 			on_detach = function (_)
 				self._attachments[buffer] = nil
