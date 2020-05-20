@@ -8,13 +8,50 @@ pub mod lua;
 pub mod python;
 
 use pulldown_cmark::{html, CodeBlockKind, Event, Options, Parser, Tag};
-use std::{error, result, sync};
+use std::{error, fmt, result, sync};
+
+type Result<T> = result::Result<T, Box<dyn error::Error>>;
+
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub enum CommonmarkError {
+    /// The requested extension does not exist
+    UnknownExtension(String),
+}
+
+impl fmt::Display for CommonmarkError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match *self {
+            CommonmarkError::UnknownExtension(ref s) => {
+                write!(f, "The requested '{}' extension not known to commonmark", s)
+            }
+        }
+    }
+}
+
+impl error::Error for CommonmarkError {
+    fn description(&self) -> &str {
+        match *self {
+            CommonmarkError::UnknownExtension(..) => "unknown extension",
+        }
+    }
+}
 
 lazy_static! {
     pub static ref OPTIONS: sync::RwLock<Options> = sync::RwLock::new(Options::empty());
 }
 
-type Result<T> = result::Result<T, Box<dyn error::Error>>;
+impl OPTIONS {
+    pub fn enable_extension(extension: String) -> Result<()> {
+        match extension.as_str() {
+            "tables" => OPTIONS.write()?.insert(Options::ENABLE_TABLES),
+            "footnotes" => OPTIONS.write()?.insert(Options::ENABLE_FOOTNOTES),
+            "strikethrough" => OPTIONS.write()?.insert(Options::ENABLE_STRIKETHROUGH),
+            "TASKLISTS" => OPTIONS.write()?.insert(Options::ENABLE_TASKLISTS),
+            _ => return Err(Box::new(CommonmarkError::UnknownExtension(extension))),
+        };
+        Ok(())
+    }
+}
 
 fn to_html(buffer: String) -> Result<String> {
     let parser = Parser::new_ext(buffer.as_str(), *OPTIONS.read()?);
