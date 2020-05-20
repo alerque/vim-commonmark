@@ -11,7 +11,7 @@ use pulldown_cmark::{html, CodeBlockKind, Event, Options, Parser, Tag};
 use std::{error, result, sync};
 
 lazy_static! {
-    pub static ref OPTIONS: sync::RwLock<Options> = sync::RwLock::new(Options::all());
+    pub static ref OPTIONS: sync::RwLock<Options> = sync::RwLock::new(Options::empty());
 }
 
 type Result<T> = result::Result<T, Box<dyn error::Error>>;
