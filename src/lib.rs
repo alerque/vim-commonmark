@@ -7,7 +7,7 @@ pub mod lua;
 #[cfg(feature = "python")]
 pub mod python;
 
-use pulldown_cmark::{html, CodeBlockKind, Event, Options, Parser, Tag};
+use pulldown_cmark::{html, CodeBlockKind, Event, Options, Parser, Tag, LinkType};
 use std::{error, fmt, result, sync};
 
 type Result<T> = result::Result<T, Box<dyn error::Error>>;
@@ -90,7 +90,18 @@ fn get_offsets(buffer: String) -> Result<Events> {
                 Tag::List(_) => Some(String::from("cmarkList")),
                 Tag::FootnoteDefinition(_) => Some(String::from("cmarkFootnoteDefinition")),
                 Tag::Table(_) => Some(String::from("cmarkTable")),
-                Tag::Link { .. } => Some(String::from("cmarkLink")),
+                Tag::Link(kind, a, b) => match kind {
+                    LinkType::Inline => Some(String::from("cmarkLink")),
+                    LinkType::Reference => {
+                        // How do we look-ahead and get the end offset?
+                        eprintln!("Got a {:?} with {} AND {}", kind, a, b);
+                        Some(String::from("cmarkLink"))
+                    },
+                    _ => {
+                        eprintln!("Got a {:?} with {} AND {}", kind, a, b);
+                        None
+                    },
+                },
                 Tag::Image { .. } => Some(String::from("cmarkImage")),
                 Tag::Paragraph { .. } => None,
                 _ => Some(format!("cmark{:?}", tag)),
