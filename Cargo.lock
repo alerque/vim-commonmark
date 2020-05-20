@@ -369,6 +369,7 @@ checksum = "078775d0255232fb988e6fccf26ddc9d1ac274299aaedcedce21c6f72cc533ce"
 name = "vim-commonmark"
 version = "0.0.0"
 dependencies = [
+ "lazy_static",
  "mlua",
  "mlua_derive",
  "pulldown-cmark",
