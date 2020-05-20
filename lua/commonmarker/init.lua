@@ -7,10 +7,12 @@ local buf_add_highlight = vim.api.nvim_buf_add_highlight
 local buf_attach = vim.api.nvim_buf_attach
 local buf_get_lines = vim.api.nvim_buf_get_lines
 local buf_clear_namespace = vim.api.nvim_buf_clear_namespace
+local get_var = vim.api.nvim_get_var
 
 local commonmarker = {
 	_attachments = {},
-	_namespace = vim.api.nvim_create_namespace("rustymarks")
+	_namespace = vim.api.nvim_create_namespace("rustymarks"),
+	extensions = {},
 }
 
 -- luacheck: ignore dump
@@ -54,6 +56,12 @@ local function highlight (buffer, namespace)
 			buf_add_highlight(buffer, namespace, event.group, sline - 1, scol, ecol)
 		end
 	end
+end
+
+function commonmarker:init ()
+	self.extensions = get_var("commonmark#extensions")
+	rust.init(self.extensions)
+	return self
 end
 
 function commonmarker:detach (buffer)
