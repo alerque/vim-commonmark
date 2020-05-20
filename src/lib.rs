@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate lazy_static;
+
 #[cfg(feature = "lua")]
 pub mod lua;
 
@@ -5,13 +8,16 @@ pub mod lua;
 pub mod python;
 
 use pulldown_cmark::{html, CodeBlockKind, Event, Options, Parser, Tag};
-use std::{error, result};
+use std::{error, result, sync};
+
+lazy_static! {
+    pub static ref OPTIONS: sync::RwLock<Options> = sync::RwLock::new(Options::all());
+}
 
 type Result<T> = result::Result<T, Box<dyn error::Error>>;
 
 fn to_html(buffer: String) -> Result<String> {
-    let options = Options::all();
-    let parser = Parser::new_ext(buffer.as_str(), options);
+    let parser = Parser::new_ext(buffer.as_str(), *OPTIONS.read()?);
     let mut html_output = String::new();
     html::push_html(&mut html_output, parser);
     Ok(html_output)
@@ -28,8 +34,7 @@ struct MdTag {
 type Events = Vec<MdTag>;
 
 fn get_offsets(buffer: String) -> Result<Events> {
-    let options = Options::all();
-    let parser = Parser::new_ext(buffer.as_str(), options);
+    let parser = Parser::new_ext(buffer.as_str(), *OPTIONS.read()?);
     let mut events = Events::new();
     for (event, range) in parser.into_offset_iter() {
         let first = range.start + 1;
