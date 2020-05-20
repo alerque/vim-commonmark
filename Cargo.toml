@@ -15,6 +15,9 @@ default = ["lua"]
 lua = ["mlua", "mlua_derive"]
 python = ["pyo3"]
 
+[dependencies.lazy_static]
+version = "1.4.0"
+
 [dependencies.pulldown-cmark]
 version = "0.7.1"
 features = ["simd"]

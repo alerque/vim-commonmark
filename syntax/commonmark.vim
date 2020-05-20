@@ -49,7 +49,7 @@ if exists('g:commonmark_debug')
 endif
 
 lua package.loaded["commonmarker"] = nil -- Force module reload during dev
-lua commonmarker = require("commonmarker")
+lua commonmarker = require("commonmarker"):init()
 lua commonmarker:attach(vim.api.nvim_get_current_buf())
 
 augroup commonmarker
