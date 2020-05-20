@@ -9,6 +9,18 @@ Vim syntax plugin specifically targetting [CommonMark][commonmark] using the [pu
 
 Defaults options are for strict CommonMark mode, but some extensions are also available (footnotes, tables, task lists, strikethrough).
 
+```viml
+" Enable all available extensions
+let g:commonmark#extentions#all = 1
+```
+
+Alternatively you can enable just the extensions you want:
+
+```viml
+" Enable specific extension(s)
+let g:commonmark#extensions = [ "footnotes", "strikethrough" ]
+```
+
 ## Requirements
 
 * Neovim (Support for VIM8 would be possible, contributions welcome) with Lua support
