@@ -19,7 +19,7 @@ python = ["pyo3"]
 version = "1.4.0"
 
 [dependencies.pulldown-cmark]
-version = "0.7.1"
+version = "0.7.2"
 features = ["simd"]
 
 [dependencies.mlua]
