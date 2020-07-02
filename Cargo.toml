@@ -24,17 +24,17 @@ features = ["simd"]
 
 [dependencies.mlua]
 optional = true
-version = "0.3.2"
+version = "0.4.1"
 default-features = false
-features = [ "luajit" ]
+features = [ "luajit", "module" ]
 
 [dependencies.mlua_derive]
 optional = true
-version = "0.3.0"
+version = "0.4.0"
 
 [dependencies.pyo3]
 optional = true
-version = "0.10.1"
+version = "0.11.1"
 features = ["extension-module"]
 
 [profile.release]
