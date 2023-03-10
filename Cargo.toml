@@ -15,26 +15,26 @@ default = ["lua"]
 lua = ["mlua", "mlua_derive"]
 python = ["pyo3"]
 
-[dependencies.lazy_static]
-version = "1.4.0"
+[dependencies]
+lazy_static = "1.4.0"
 
 [dependencies.pulldown-cmark]
-version = "0.7.2"
+version = "0.9.2"
 features = ["simd"]
 
 [dependencies.mlua]
 optional = true
-version = "0.4.1"
+version = "0.8.8"
 default-features = false
 features = [ "luajit", "module" ]
 
 [dependencies.mlua_derive]
 optional = true
-version = "0.4.0"
+version = "0.8.0"
 
 [dependencies.pyo3]
 optional = true
-version = "0.11.1"
+version = "0.18.1"
 features = ["extension-module"]
 
 [profile.release]
