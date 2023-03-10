@@ -79,7 +79,7 @@ fn get_offsets(buffer: String) -> Result<Events> {
         let mut lang = None;
         let group = match event {
             Event::Start(tag) => match tag {
-                Tag::Heading(level) => Some(format!("cmarkHeading{}", level)),
+                Tag::Heading(level, ..) => Some(format!("cmarkHeading{}", level)),
                 Tag::CodeBlock(kind) => match kind {
                     CodeBlockKind::Indented => Some(String::from("cmarkCodeBlockIndented")),
                     CodeBlockKind::Fenced(attrs) => {
